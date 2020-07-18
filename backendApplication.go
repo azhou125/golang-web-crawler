@@ -76,39 +76,96 @@ func getArticleContent(value GeneralDataList) {
 
 /////调用kafka客户端发送消息//////
 func deliverMessageToKafka(topic string, value GeneralDataList){
+
 	data, _ := json.Marshal(value)
 
-	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost"})
+	fmt.Println(fmt.Sprintf(string(data)))
+	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "0.0.0.0:9092"})
 	if err != nil {
 		panic(err)
 	}
 	defer p.Close()
 
-	// Delivery report handler for produced messages
-	go func() {
-		for e := range p.Events() {
-			switch ev := e.(type) {
-			case *kafka.Message:
-				if ev.TopicPartition.Error != nil {
-					fmt.Printf("Delivery failed: %v\n", ev.TopicPartition)
-				} else {
-					fmt.Printf("Delivered message to %v\n", ev.TopicPartition)
-				}
-			}
-		}
-	}()
+	Produce(p,topic,nil,[]byte(data))
 
-	// Produce messages to topic
-	msg := &kafka.Message{
+	//// Delivery report handler for produced messages
+	//go func() {
+	//	for e := range p.Events() {
+	//		switch ev := e.(type) {
+	//		case *kafka.Message:
+	//			if ev.TopicPartition.Error != nil {
+	//				fmt.Printf("Delivery failed: %v\n", ev.TopicPartition)
+	//			} else {
+	//				fmt.Printf("Delivered message to %v\n", ev.TopicPartition)
+	//			}
+	//		}
+	//	}
+	//}()
+	//
+	//// Produce messages to topic
+	//msg := &kafka.Message{
+	//	TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+	//	Value:          []byte(data),
+	//}
+	//
+	//p.Produce(msg,nil)
+	//
+	//// Wait for message deliveries before shutting down
+	//p.Flush(10 * 1000)
+}
+
+func Produce(producer *kafka.Producer, topic string, key, data []byte) error {
+	deliveryChan := make(chan kafka.Event)
+	defer close(deliveryChan)
+	err := producer.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-		Value:          []byte(data),
+		Value:          data,
+		Key:            key,
+	}, deliveryChan)
+	if err != nil {
+		return nil
+	}
+	e := <-deliveryChan
+	m := e.(*kafka.Message)
+	if m.TopicPartition.Error != nil {
+		fmt.Printf("Delivery failed: %v\n", m.TopicPartition.Error)
+	} else {
+		fmt.Printf("Delivery message to topic %s [%d] at offset %v\n",
+			m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
+	}
+	return nil
+}
+
+
+
+
+/////从kafka客户端接收消息//////
+func receiveMessageFromKafka(topic string){
+
+	c, err := kafka.NewConsumer(&kafka.ConfigMap{
+		"bootstrap.servers": "localhost",
+		"group.id":          "myGroup",
+		"auto.offset.reset": "earliest",
+	})
+
+	if err != nil {
+		panic(err)
 	}
 
-	p.Produce(msg,nil)
+	c.SubscribeTopics([]string{topic, "^aRegex.*[Tt]opic"}, nil)
 
-	// Wait for message deliveries before shutting down
-	p.Flush(5 * 1000)
+	for {
+		msg, err := c.ReadMessage(-1)
+		if err == nil {
+			fmt.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
+		} else {
+			// The client will automatically try to recover from all errors.
+			fmt.Printf("Consumer error: %v (%v)\n", err, msg)
+		}
+	}
+
 }
+
 
 
 
@@ -118,5 +175,5 @@ func main() {
 	//tianXingTouTiaoDataGet()
 
 	deliverMessageToKafka("topic1",wangYiXinWenDataGet())
-	deliverMessageToKafka("topic2",tianXingTouTiaoDataGet())
+	//deliverMessageToKafka("topic2",tianXingTouTiaoDataGet())
 }
