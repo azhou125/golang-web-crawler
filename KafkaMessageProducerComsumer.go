@@ -69,6 +69,8 @@ func receiveMessageFromKafka(topic string){
 
 	c.SubscribeTopics([]string{topic, "^aRegex.*[Tt]opic"}, nil)
 
+	esclient := getESClient()
+
 	for {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {
@@ -80,5 +82,7 @@ func receiveMessageFromKafka(topic string){
 
 		receivedNews := StdNew{}
 		Json2Go([]byte(msg.Value),&receivedNews)
+
+		insertNews(esclient, receivedNews)
 	}
 }
