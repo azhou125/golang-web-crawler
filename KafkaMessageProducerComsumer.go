@@ -47,8 +47,6 @@ func Produce(producer *kafka.Producer, topic string, key, data []byte) error {
 			m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
 		fmt.Println()
 		fmt.Println()
-		fmt.Println()
-		fmt.Println()
 	}
 	return nil
 }

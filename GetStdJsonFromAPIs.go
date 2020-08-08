@@ -36,19 +36,25 @@ func wangYiXinWenDataGet() []StdNew {
 	return stdNews
 }
 
-//func tianXingTouTiaoDataGet() TianXingTouTiaoDataList{
-//	url := "http://api.tianapi.com/topnews/index?key=4703f453980fd2a17b6413701b591c4b"
-//
-//	resp, _ := http.Get(url)
-//	body, _ := ioutil.ReadAll(resp.Body)
-//	resp.Body.Close()
-//
-//	s := TianXingTouTiaoDataList{}
-//	json.Unmarshal([]byte(body), &s)
-//	//fmt.Println(fmt.Sprintf("%+v",s))
-//	//fmt.Println()
-//	return s
-//}
+func tianXingTouTiaoDataGet() []StdNew{
+	url := "http://api.tianapi.com/topnews/index?key=4703f453980fd2a17b6413701b591c4b"
+
+	resp, err := http.Get(url)
+	if err !=nil {
+		fmt.Println("Couldn't fetch news", err)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err !=nil {
+		fmt.Println("Couldn't read news", err)
+	}
+
+	data := TianXingTouTiaoRaw{}
+	Json2Go([]byte(body[9: len(body)-1]), &data)
+
+	stdNews := TianXingTouTiaoGO2StdGo(data)
+	return stdNews
+}
 
 /////提取正文/////
 //func getArticleContent(value GeneralDataList) {

@@ -45,14 +45,13 @@ func Json2Go(body []byte, rawNews interface{}) {
 	if err != nil {
 		fmt.Println("Couldn't convert json to go", err)
 	}
-	//fmt.Println("AAA: ",rawNews)
+
 }
 func Go2Json(data interface{}) []byte{
 	stdJson, err := json.Marshal(data)
 	if err !=nil {
 		fmt.Println("Couldn't convert go objects back to json", err)
 	}
-	//fmt.Println(fmt.Sprintf(string(stdJson)))
 	return stdJson
 }
 
@@ -63,10 +62,9 @@ type StdNew struct{
 	Title string `json:"title"`
 	Body string `json:"body"`
 	URL string `json:"URL"`
-	//Types []string `json:"types"`
 }
 
-func TianXingTouTiaoGO2Std(txtt TianXingTouTiaoRaw) []StdNew {
+func TianXingTouTiaoGO2StdGo(txtt TianXingTouTiaoRaw) []StdNew {
 	ret := []StdNew{}
 	for i:= range txtt.Newslist{
 		var item StdNew
@@ -92,16 +90,3 @@ func WangYiXinWenGO2StdGo(wyxw WangYiXinWenRaw) []StdNew {
 	}
 	return ret
 }
-//func ZHGO2Std(zh ZongHeNewsRaw) []StdNew {
-//	ret := []StdNew{}
-//	for i:= range zh.Newslist{
-//		var item StdNew
-//		item.Source = "zonghe"
-//		item.Timestamp = time.Now().Format("2006-01-02 15:04:05")
-//		item.Title = zh.Newslist[i].Title
-//		item.Body = zh.Newslist[i].Description
-//		item.URL = zh.Newslist[i].URL
-//		ret = append(ret, item)
-//	}
-//	return ret
-//}
