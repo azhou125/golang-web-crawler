@@ -20,19 +20,10 @@ func wangYiXinWenDataGet() []StdNew {
 		fmt.Println("Couldn't read news", err)
 	}
 
-	//fmt.Println(string(body))
-
 	data := WangYiXinWenRaw{}
 	Json2Go([]byte(body[9: len(body)-1]), &data)
 
-	//fmt.Println(data)
-
 	stdNews := WangYiXinWenGO2StdGo(data)
-
-	//for i:= range stdNews{
-	//	stdJson := Go2Json(stdNews[i])
-	//}
-
 	return stdNews
 }
 
