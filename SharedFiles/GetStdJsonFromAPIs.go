@@ -1,4 +1,4 @@
-package main
+package SharedFiles
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 /////调用第三方API/////
-func wangYiXinWenDataGet() []StdNew {
+func WangYiXinWenDataGet() []StdNew {
 	url := "https://3g.163.com/touch/reconstruct/article/list/BBM54PGAwangning/0-10.html"
 
 	resp, err := http.Get(url)
@@ -29,7 +29,7 @@ func wangYiXinWenDataGet() []StdNew {
 	return stdNews
 }
 
-func tianXingTouTiaoDataGet() []StdNew{
+func TianXingTouTiaoDataGet() []StdNew{
 	url := "http://api.tianapi.com/topnews/index?key=4703f453980fd2a17b6413701b591c4b"
 
 	resp, err := http.Get(url)

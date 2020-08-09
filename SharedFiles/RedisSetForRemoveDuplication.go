@@ -1,4 +1,4 @@
-package main
+package SharedFiles
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 
 var ctx = context.Background()
 
-func newRedisClient()  *redis.Client{
+func NewRedisClient()  *redis.Client{
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
@@ -20,7 +20,7 @@ func newRedisClient()  *redis.Client{
 	return rdb
 }
 
-func removeDuplicate(rdb *redis.Client, stdNews []StdNew) []StdNew{
+func RemoveDuplicate(rdb *redis.Client, stdNews []StdNew) []StdNew{
 	ret := []StdNew{}
 	for i:= range stdNews {
 		key := stdNews[i].Title

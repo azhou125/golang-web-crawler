@@ -1,4 +1,4 @@
-package main
+package SharedFiles
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
-func getESClient() (*elastic.Client) {
+func GetESClient() (*elastic.Client) {
 
 	client, err :=  elastic.NewClient(elastic.SetURL("http://localhost:9200"),
 		elastic.SetSniff(false),
@@ -25,7 +25,7 @@ func getESClient() (*elastic.Client) {
 	return client
 }
 
-func insertNews(esclient *elastic.Client, data StdNew){
+func InsertNews(esclient *elastic.Client, data StdNew){
 	ctx := context.Background()
 	dataJSON, err := json.Marshal(data)
 	js := string(dataJSON)
@@ -43,10 +43,6 @@ func insertNews(esclient *elastic.Client, data StdNew){
 	fmt.Println("[Elastic][InsertProduct]Insertion Successful")
 }
 
-//type myJson struct {
-//	newsList []StdNew
-//}
-
 func SearchAll() string {
 
 	host := "localhost:9200"
@@ -54,12 +50,12 @@ func SearchAll() string {
 	url := fmt.Sprintf("http://%s/%s/_search", host, indexPattern)
 	queryStr := "{}"
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer([]byte(queryStr)))
-	checkError("Failed to fetch news", err)
+	CheckError("Failed to fetch news", err)
 
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	checkError("Failed to read news", err)
+	CheckError("Failed to read news", err)
 	return string(body)
 }
 
@@ -69,7 +65,7 @@ func SearchBySource(source string) string {
 	indexPattern := "news"
 	url := fmt.Sprintf("http://%s/%s/_search", host, indexPattern)
 	queryStr := fmt.Sprintf(
-		`{	
+		`{
 			"query":{
 				"match":{
 					"source":"%s"
@@ -78,12 +74,12 @@ func SearchBySource(source string) string {
 		}`,
 		source)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer([]byte(queryStr)))
-	checkError("Failed to fetch news", err)
+	CheckError("Failed to fetch news", err)
 
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	checkError("Failed to read news", err)
+	CheckError("Failed to read news", err)
 	return string(body)
 }
 
@@ -93,7 +89,7 @@ func SearchByTitle(title string) string {
 	indexPattern := "news"
 	url := fmt.Sprintf("http://%s/%s/_search", host, indexPattern)
 	queryStr := fmt.Sprintf(
-		`{	
+		`{
 			"query":{
 				"match":{
 					"title":"%s"
@@ -102,12 +98,12 @@ func SearchByTitle(title string) string {
 		}`,
 		title)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer([]byte(queryStr)))
-	checkError("Failed to fetch news", err)
+	CheckError("Failed to fetch news", err)
 
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	checkError("Failed to read news", err)
+	CheckError("Failed to read news", err)
 	return string(body)
 }
 
@@ -117,7 +113,7 @@ func SearchByBody(newsBody string) string {
 	indexPattern := "news"
 	url := fmt.Sprintf("http://%s/%s/_search", host, indexPattern)
 	queryStr := fmt.Sprintf(
-		`{	
+		`{
 			"query":{
 				"match":{
 					"body":"%s"
@@ -126,11 +122,11 @@ func SearchByBody(newsBody string) string {
 		}`,
 		newsBody)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer([]byte(queryStr)))
-	checkError("Failed to fetch news", err)
+	CheckError("Failed to fetch news", err)
 
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	checkError("Failed to read news", err)
+	CheckError("Failed to read news", err)
 	return string(body)
 }

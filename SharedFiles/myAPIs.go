@@ -1,4 +1,4 @@
-package main
+package SharedFiles
 
 import (
 	"encoding/json"
@@ -10,27 +10,27 @@ import (
 )
 
 // Restful Apis
-func startServer() {
+func StartServer() {
 	fmt.Println("Starting Server ...... ")
 
 	router := chi.NewRouter()
-	router.Get("/api/searchAll",searchAllHandler)
-	router.Get("/api/searchBySource",searchBySourceHandler)
-	router.Get("/api/searchByTitle",searchByTitleHandler)
-	router.Get("/api/searchByBody",searchByBodyHandler)
+	router.Get("/api/searchAll",SearchAllHandler)
+	router.Get("/api/searchBySource",SearchBySourceHandler)
+	router.Get("/api/searchByTitle",SearchByTitleHandler)
+	router.Get("/api/searchByBody",SearchByBodyHandler)
 
 	log.Fatal(http.ListenAndServe(":8080",router))
 	fmt.Println("Server is listening on port 8080...")
 
 }
 
-func searchAllHandler(w http.ResponseWriter, r *http.Request) {
+func SearchAllHandler(w http.ResponseWriter, r *http.Request) {
 	var jsonMap map[string]interface{}
 	json.Unmarshal([]byte(SearchAll()), &jsonMap)
 	json.NewEncoder(w).Encode(jsonMap)
 }
 
-func searchBySourceHandler(w http.ResponseWriter, r *http.Request) {
+func SearchBySourceHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	source := query.Get("source")
 
@@ -39,7 +39,7 @@ func searchBySourceHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(jsonMap)
 }
 
-func searchByTitleHandler(w http.ResponseWriter, r *http.Request) {
+func SearchByTitleHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	title := query.Get("title")
 
@@ -48,7 +48,7 @@ func searchByTitleHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(jsonMap)
 }
 
-func searchByBodyHandler(w http.ResponseWriter, r *http.Request) {
+func SearchByBodyHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	body := query.Get("body")
 

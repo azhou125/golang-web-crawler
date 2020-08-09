@@ -1,4 +1,4 @@
-package main
+package SharedFiles
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 /////从kafka客户端接收消息//////
-func receiveMessageFromKafka(topic string){
+func ReceiveMessageFromKafka(topic string){
 
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": "localhost",
@@ -20,7 +20,7 @@ func receiveMessageFromKafka(topic string){
 
 	c.SubscribeTopics([]string{topic, "^aRegex.*[Tt]opic"}, nil)
 
-	esclient := getESClient()
+	esclient := GetESClient()
 
 	for {
 		msg, err := c.ReadMessage(-1)
@@ -34,6 +34,6 @@ func receiveMessageFromKafka(topic string){
 		receivedNews := StdNew{}
 		Json2Go([]byte(msg.Value),&receivedNews)
 
-		insertNews(esclient, receivedNews)
+		InsertNews(esclient, receivedNews)
 	}
 }

@@ -1,5 +1,7 @@
 package main
 
+import pkg "backendProject/SharedFiles"
+
 func main() {
-	startServer()
+	pkg.StartServer()
 }

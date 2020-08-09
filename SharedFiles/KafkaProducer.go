@@ -1,4 +1,4 @@
-package main
+package SharedFiles
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 /////调用kafka客户端发送消息//////
-func deliverMessageToKafka(topic string, stdNews []StdNew){
+func DeliverMessageToKafka(topic string, stdNews []StdNew){
 	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:9092"})
 	if err != nil {
 		panic(err)
